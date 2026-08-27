@@ -1,5 +1,9 @@
+import os
+from http.client import responses
+
 import requests
 from custom_requester.custom_requester import CustomRequester
+from data.auth.register_data import get_register_payload
 
 BASE_URL = "https://auth.dev-cinescope.coconutqa.ru"
 HEADERS = {
@@ -60,3 +64,7 @@ class TestAuth:
 
         assert "accessToken" in response_data
         assert response_data["user"]["email"] == registered_user["email"]
+
+
+
+
