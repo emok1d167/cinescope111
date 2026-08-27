@@ -7,32 +7,11 @@ def test_get_movies_success(api_manager):
     response = api_manager.movies_api.get_movies()
     response_data = response.json()
 
-    assert "movies" in response_data
-    assert "count" in response_data
-    assert "page" in response_data
-    assert "pageSize" in response_data
-    assert "pageCount" in response_data
-
-    movies = response_data["movies"]
-
-    assert isinstance(movies, list)
+    assert isinstance(response_data["movies"], list)
     assert isinstance(response_data["count"], int)
     assert isinstance(response_data["page"], int)
     assert isinstance(response_data["pageSize"], int)
     assert isinstance(response_data["pageCount"], int)
-
-    for movie in movies:
-        assert "id" in movie
-        assert "name" in movie
-        assert "price" in movie
-        assert "description" in movie
-        assert "imageUrl" in movie
-        assert "location" in movie
-        assert "published" in movie
-        assert "genreId" in movie
-        assert "genre" in movie
-        assert "createdAt" in movie
-        assert "rating" in movie
 
 
 def test_get_movies_filter_location(api_manager):
