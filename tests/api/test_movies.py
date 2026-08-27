@@ -75,14 +75,9 @@ def test_get_movie(api_manager, created_movie):
 def test_update_movie(super_admin_api_manager, created_movie):
     movie_id = created_movie["id"]
     random_name = DataGenerator.generate_random_movie()
+
     updated_movie_data = {
-        "name": random_name["name"],
-        "imageUrl": created_movie["imageUrl"],
-        "price": created_movie["price"],
-        "description": created_movie["description"],
-        "location": created_movie["location"],
-        "published": created_movie["published"],
-        "genreId": created_movie["genreId"],
+        "name": random_name["name"]
     }
 
     response = super_admin_api_manager.movies_api.update_movie(
@@ -193,14 +188,9 @@ def test_delete_movie_not_found_return_404(super_admin_api_manager,created_movie
 
 def test_update_movie_invalid_parameters_return_400(super_admin_api_manager, created_movie):
     movie_id = created_movie["id"]
+
     updated_movie_data = {
-        "name": 123,
-        "imageUrl": created_movie["imageUrl"],
-        "price": created_movie["price"],
-        "description": created_movie["description"],
-        "location": created_movie["location"],
-        "published": created_movie["published"],
-        "genreId": created_movie["genreId"],
+        "name": 123
     }
 
     response = super_admin_api_manager.movies_api.update_movie(
@@ -224,13 +214,7 @@ def test_update_movie_not_found_return_404(super_admin_api_manager,created_movie
     random_movie = DataGenerator.generate_random_movie()
 
     updated_movie_data = {
-        "name": random_movie["name"],
-        "imageUrl": created_movie["imageUrl"],
-        "price": created_movie["price"],
-        "description": created_movie["description"],
-        "location": created_movie["location"],
-        "published": created_movie["published"],
-        "genreId": created_movie["genreId"],
+        "name": random_movie["name"]
     }
 
     response = super_admin_api_manager.movies_api.update_movie(
