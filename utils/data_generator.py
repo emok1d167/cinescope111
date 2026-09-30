@@ -1,3 +1,4 @@
+import datetime
 import random
 import string
 from faker import Faker
@@ -19,7 +20,7 @@ class DataGenerator:
                 k=10
             )
         )
-        return f"Test_{random_string}1!"
+        return f"Test_{random_string}1@"
 
     @staticmethod
     def generate_random_name():
@@ -56,3 +57,21 @@ class DataGenerator:
             "genreId": 8,
         }
 
+
+
+    @staticmethod
+    def generate_user_data() -> dict:
+        """Генерирует данные для тестового пользователя"""
+        from uuid import uuid4
+
+        return {
+            'id': f'{uuid4()}',  # генерируем UUID как строку
+            'email': DataGenerator.generate_random_email(),
+            'full_name': DataGenerator.generate_random_name(),
+            'password': DataGenerator.generate_random_password(),
+            'created_at': datetime.datetime.now(),
+            'updated_at': datetime.datetime.now(),
+            'verified': False,
+            'banned': False,
+            'roles': '{USER}'
+        }
