@@ -1,4 +1,3 @@
-from faker.contrib.pytest.plugin import faker
 from utils.data_generator import DataGenerator
 
 

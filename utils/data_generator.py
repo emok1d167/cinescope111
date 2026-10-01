@@ -56,22 +56,3 @@ class DataGenerator:
             "published": True,
             "genreId": 8,
         }
-
-
-
-    @staticmethod
-    def generate_user_data() -> dict:
-        """Генерирует данные для тестового пользователя"""
-        from uuid import uuid4
-
-        return {
-            'id': f'{uuid4()}',  # генерируем UUID как строку
-            'email': DataGenerator.generate_random_email(),
-            'full_name': DataGenerator.generate_random_name(),
-            'password': DataGenerator.generate_random_password(),
-            'created_at': datetime.datetime.now(),
-            'updated_at': datetime.datetime.now(),
-            'verified': False,
-            'banned': False,
-            'roles': '{USER}'
-        }

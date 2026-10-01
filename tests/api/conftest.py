@@ -3,7 +3,6 @@ import pytest
 from clients.api_manager import ApiManager
 from constants.roles import Roles
 from entities.user import User
-from resources.user_creds import SuperAdminCreds
 from utils.data_generator import DataGenerator
 from custom_requester.custom_requester import CustomRequester
 from config.base_urls import AUTH_BASE_URL
@@ -11,6 +10,8 @@ import os
 from dotenv import load_dotenv
 from sqlalchemy.orm import Session
 from db_requester.db_client import get_db_session
+from config.env_config import EnvConfig
+from data.auth.register_data import get_register_payload
 
 
 load_dotenv()
@@ -32,14 +33,7 @@ def custom_requester(session):
 
 @pytest.fixture(scope="function")
 def test_user():
-    password = DataGenerator.generate_random_password()
-    return {
-        "email": DataGenerator.generate_random_email(),
-        "fullName": DataGenerator.generate_random_name(),
-        "password": password,
-        "passwordRepeat": password,
-        "roles": [Roles.USER.value]
-    }
+    return get_register_payload()
 
 @pytest.fixture(scope="function")
 def registered_user(api_manager, test_user):
@@ -47,23 +41,6 @@ def registered_user(api_manager, test_user):
     test_user["id"] = response["id"]
     return test_user
 
-# @pytest.fixture(scope="session")
-# def super_admin_api_manager(api_manager):
-#     login_data = {
-#         "email": os.getenv("SUPER_ADMIN_EMAIL"),
-#         "password": os.getenv("SUPER_ADMIN_PASSWORD"),
-#     }
-#
-#     response = api_manager.auth_api.login_user(login_data)
-#     response_data = response.json()
-#
-#     access_token = response_data["accessToken"]
-#
-#     api_manager.session.headers.update(
-#         {"Authorization": f"Bearer {access_token}"}
-#     )
-#
-#     return api_manager
 
 @pytest.fixture(scope="function")
 def created_movie(super_admin):
@@ -93,11 +70,20 @@ def super_admin(user_session):
     new_session = user_session()
 
     super_admin = User(
-        SuperAdminCreds.USERNAME,
-        SuperAdminCreds.PASSWORD,
+        EnvConfig.require("SUPER_ADMIN_EMAIL"),
+        EnvConfig.require("SUPER_ADMIN_PASSWORD"),
         [Roles.SUPER_ADMIN.value],
         new_session
     )
+
+    response = super_admin.api.auth_api.login_user(super_admin.creds)
+    access_token = response.json()["accessToken"]
+
+    super_admin.api.session.headers.update({
+        "Authorization": f"Bearer {access_token}"
+    })
+
+    return super_admin
 
     response = super_admin.api.auth_api.login_user(super_admin.creds)
     access_token = response.json()["accessToken"]
@@ -178,18 +164,3 @@ def db_session() -> Session:
     db_session = get_db_session()
     yield db_session
     db_session.close()
-
-
-
-
-@pytest.fixture(scope="function")
-def created_test_user(db_helper):
-    """
-    Фикстура, которая создает тестового пользователя в БД
-    и удаляет его после завершения теста
-    """
-    user = db_helper.create_test_user(DataGenerator.generate_user_data())
-    yield user
-    # Cleanup после теста
-    if db_helper.get_user_by_id(user.id):
-        db_helper.delete_user(user)
